@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071a2d">
+<title>AQUASHIELD AI Simulation | Flood & Drainage Response Simulation</title>
+<link rel="stylesheet" href="/aquanex-assets/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><span class="drop">◆</span><span class="wave">≈</span></div>
+      <div><strong>AQUANEX <em>AI</em></strong><small>INTELLIGENT FLOOD RESPONSE</small></div>
+    </div>
+    <div class="side-label">OPERATIONS</div>
+    <button class="side-link active" data-view="dashboard"><span>▦</span> Dashboard</button>
+    <button class="side-link" data-view="monitor"><span>⌁</span> Live Monitoring</button>
+    <button class="side-link" data-view="tests"><span>✓</span> Scenario Tests</button>
+    <button class="side-link" data-view="events"><span>◷</span> Incident Log <b id="event-count" class="nav-count">0</b></button>
+    <div class="side-label side-gap">SYSTEM</div>
+    <div class="connection-card">
+      <div class="connection-top"><span class="status-dot" id="side-dot"></span><b id="side-network">Network online</b></div>
+      <small id="side-network-note">Simulation link active</small>
+      <div class="connection-line"><span id="connection-fill"></span></div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="demo-label"><span class="pulse"></span> SIMULATION MODE</div>
+      <p>Virtual sensor values only. No live field data connected.</p>
+      <div class="challenge">INNOVATORS CONCLAVE 2026<br><b>IC26-04-01</b></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">AQUASHIELD AI Simulation <span>/</span> <span id="crumb">Dashboard</span></div>
+        <h1 id="page-title">Flood response dashboard</h1>
+        <p class="subtitle">Sense early. Assess risk. Recommend the next response.</p>
+      </div>
+      <div class="top-controls"><a class="btn btn-outline" href="/">← AQUASHIELD AI response dashboard</a>
+        <span class="simulation-chip"><span></span> Virtual data</span>
+        <button class="btn btn-outline" id="pause-btn">Ⅱ Pause simulation</button>
+        <button class="btn btn-primary" id="reset-btn">↻ Reset demo</button>
+      </div>
+    </header>
+
+    <div class="notice"><span class="notice-icon">i</span><div><b>Prototype boundary</b><span>This dashboard uses simulated readings and an illustrative rule-based selector. It is not a trained AI model, validated flood forecast, live sensor deployment, or official public-warning service.</span></div><button id="dismiss-notice" aria-label="Dismiss notice">×</button></div>
+
+    <section id="dashboard-view" class="view">
+      <div class="metric-grid">
+        <article class="metric-card">
+          <div class="metric-heading"><span>WATER LEVEL</span><span class="metric-symbol blue">↕</span></div>
+          <div class="metric-value"><strong id="water-value">0.42</strong><span>m</span><span id="water-trend" class="trend positive">↗ rising</span></div>
+          <div class="meter"><span id="water-meter" class="meter-blue"></span></div>
+          <div class="metric-foot"><span>Illustrative danger line</span><b>1.50 m</b></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-heading"><span>RAINFALL INTENSITY</span><span class="metric-symbol cyan">☂</span></div>
+          <div class="metric-value"><strong id="rain-value">12</strong><span>mm/h</span></div>
+          <div class="meter"><span id="rain-meter" class="meter-cyan"></span></div>
+          <div class="metric-foot"><span>Simulation input</span><b id="rain-label">Light</b></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-heading"><span>FLOOD RISK</span><span class="metric-symbol green">◈</span></div>
+          <div class="risk-row"><div id="risk-gauge" class="risk-gauge"><div><strong id="risk-score">18</strong><small>/100</small></div></div><div><span id="risk-badge" class="risk-badge low">LOW RISK</span><p id="risk-caption">Conditions within demo limits</p></div></div>
+          <div class="metric-foot"><span>Rule-based score</span><b id="risk-confidence">Illustrative</b></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-heading"><span>DRAINAGE CONDITION</span><span class="metric-symbol amber">▤</span></div>
+          <div class="metric-value text-value"><strong id="drain-value">Open</strong></div>
+          <div class="drain-bar"><span id="drain-bar"></span></div>
+          <div class="metric-foot"><span>Simulated blockage</span><b id="blockage-value">12%</b></div>
+        </article>
+      </div>
+
+      <div class="primary-grid">
+        <section class="panel chart-panel">
+          <div class="panel-header">
+            <div><h2>Live monitoring</h2><p>Water level and rainfall trend · simulated stream</p></div>
+            <div class="chart-legend"><span><i class="legend-water"></i> Water level</span><span><i class="legend-rain"></i> Rainfall</span></div>
+          </div>
+          <div class="chart-wrap"><canvas id="trend-chart" aria-label="Simulated water level and rainfall chart"></canvas></div>
+          <div class="chart-foot"><span><i class="mini-live"></i> Updates every 2 seconds while running</span><span id="last-update">Waiting for sample…</span></div>
+        </section>
+        <section class="panel response-panel">
+          <div class="panel-header"><div><h2>Recommended response</h2><p>Decision engine output</p></div><span id="response-icon" class="response-icon">✓</span></div>
+          <div id="response-banner" class="response-banner low"><span id="response-state">MONITOR</span><h3 id="response-title">Continue monitoring</h3><p id="response-copy">Current readings indicate low risk under the demo rules.</p></div>
+          <div class="reason-title">WHY THIS RESPONSE?</div>
+          <ul id="reason-list" class="reason-list"><li>Readings are within the configured demo limits.</li></ul>
+          <div class="human-note"><span>⚑</span><p>Recommendations are advisory. A field operator must verify actual conditions.</p></div>
+        </section>
+      </div>
+
+      <div class="bottom-grid">
+        <section class="panel controls-panel">
+          <div class="panel-header"><div><h2>Scenario controls</h2><p>Change virtual inputs to test response logic</p></div><span class="tiny-tag">SIMULATOR</span></div>
+          <div class="scenario-buttons">
+            <button class="scenario-btn selected" data-scenario="normal"><span class="scenario-icon calm">☼</span><b>Normal</b><small>Baseline conditions</small></button>
+            <button class="scenario-btn" data-scenario="rain"><span class="scenario-icon rain">☂</span><b>Heavy rain</b><small>Rainfall increases</small></button>
+            <button class="scenario-btn" data-scenario="blocked"><span class="scenario-icon blocked">▤</span><b>Blocked drain</b><small>Flow restriction</small></button>
+            <button class="scenario-btn" data-scenario="rising"><span class="scenario-icon rising">↟</span><b>Rapid rise</b><small>Water level rising</small></button>
+            <button class="scenario-btn" data-scenario="critical"><span class="scenario-icon danger">!</span><b>Critical level</b><small>Urgent assessment</small></button>
+          </div>
+          <div class="slider-controls">
+            <label>Water level <b><span id="water-slider-val">0.42</span> m</b><input id="water-slider" type="range" min="0" max="2.5" step="0.01" value="0.42"></label>
+            <label>Rainfall <b><span id="rain-slider-val">12</span> mm/h</b><input id="rain-slider" type="range" min="0" max="120" step="1" value="12"></label>
+            <label>Drain blockage <b><span id="block-slider-val">12</span>%</b><input id="block-slider" type="range" min="0" max="100" step="1" value="12"></label>
+          </div>
+        </section>
+        <section class="panel health-panel">
+          <div class="panel-header"><div><h2>System health</h2><p>Fault visibility and data quality</p></div><span class="tiny-tag">INPUT STATUS</span></div>
+          <div class="health-row"><span class="health-icon">↕</span><div class="health-name"><b>Water-level sensor</b><small id="water-health-note">Fresh virtual reading</small></div><span id="water-health" class="health-state ok">● OK</span></div>
+          <div class="health-row"><span class="health-icon">☂</span><div class="health-name"><b>Rainfall input</b><small id="rain-health-note">Fresh virtual reading</small></div><span id="rain-health" class="health-state ok">● OK</span></div>
+          <div class="health-row"><span class="health-icon">⌁</span><div class="health-name"><b>Network connection</b><small id="network-health-note">Local simulation connected</small></div><span id="network-health" class="health-state ok">● ONLINE</span></div>
+          <div class="health-actions"><button id="sensor-fault-btn" class="btn btn-outline">⚠ Toggle sensor fault</button><button id="network-btn" class="btn btn-outline">⇄ Go offline</button></div>
+          <div class="fault-hint" id="fault-hint">Try a sensor fault or network outage to verify that the dashboard does not report faulty data as safe.</div>
+        </section>
+      </div>
+      <section class="panel event-panel">
+        <div class="panel-header"><div><h2>Recent events</h2><p>Scenario changes and recommended actions</p></div><button class="link-button" data-view="events">View event log →</button></div>
+        <div id="recent-events" class="recent-events"></div>
+      </section>
+    </section>
+
+    <section id="monitor-view" class="view hidden">
+      <div class="monitor-grid">
+        <section class="panel monitor-big"><div class="panel-header"><div><h2>Live sensor stream</h2><p>Virtual telemetry generated in this browser</p></div><span class="tiny-tag">NO HARDWARE LINK</span></div><div class="telemetry-grid"><div><small>WATER LEVEL</small><b><span id="mon-water">0.42</span> m</b></div><div><small>RAINFALL</small><b><span id="mon-rain">12</span> mm/h</b></div><div><small>DRAIN BLOCKAGE</small><b><span id="mon-block">12</span>%</b></div><div><small>RISK SCORE</small><b><span id="mon-risk">18</span>/100</b></div></div><div class="chart-wrap large"><canvas id="monitor-chart"></canvas></div></section>
+        <section class="panel"><div class="panel-header"><div><h2>Data quality checks</h2><p>Fail-safe display states</p></div></div><div id="quality-checks" class="quality-list"></div></section>
+      </div>
+    </section>
+
+    <section id="tests-view" class="view hidden">
+      <section class="panel"><div class="panel-header"><div><h2>Scenario test bench</h2><p>Run repeatable checks against the illustrative rules</p></div><button class="btn btn-primary" id="run-all-tests">▶ Run all tests</button></div><div class="test-intro">These are functional checks of the simulation logic, not evidence of real-world flood prediction accuracy.</div><div id="test-results" class="test-results"></div></section>
+    </section>
+
+    <section id="events-view" class="view hidden">
+      <section class="panel"><div class="panel-header"><div><h2>Incident and decision log</h2><p>Session events generated by the simulator</p></div><button class="btn btn-outline" id="clear-events">Clear log</button></div><div id="full-events" class="full-events"></div></section>
+    </section>
+    <footer> A Q U A N E X  A I <span>·</span> Local browser simulation <span>·</span> No official alerts are sent</footer>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

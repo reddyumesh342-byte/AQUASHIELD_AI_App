@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AQUASHIELD AI AI | Urban Flood Response</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand-mark">FL</div>
+  <div class="brand-copy"><strong>AQUASHIELD AI <span>AI</span></strong><small>URBAN FLOOD & DRAINAGE RESPONSE</small></div>
+  <div class="topbar-right"><a class="button ghost small" href="/aquanex">Open AQUASHIELD AI flood simulation ↗</a><span class="live-dot"></span> DEMO ENVIRONMENT <button id="resetDemo" class="button ghost small">Reset sample data</button></div>
+</header>
+<main class="shell">
+  <section class="hero">
+    <div><p class="eyebrow">IC26-04-01 · SOFTWARE CHALLENGE</p><h1>Local risks. <span>Faster response.</span></h1>
+    <p class="subhead">Turn community reports and drainage observations into prioritised municipal action.</p></div>
+    <div class="hero-chip"><span>●</span> Sample data loaded</div>
+  </section>
+  <section class="stats" id="stats">
+    <article class="stat-card"><span class="stat-icon blue">⌖</span><div><small>Open incidents</small><strong id="openCount">—</strong><em>Reported, assigned or active</em></div></article>
+    <article class="stat-card"><span class="stat-icon red">!</span><div><small>High / critical priority</small><strong id="urgentCount">—</strong><em>Requires attention</em></div></article>
+    <article class="stat-card"><span class="stat-icon amber">↗</span><div><small>Tasks in progress</small><strong id="progressCount">—</strong><em>Municipal response</em></div></article>
+    <article class="stat-card"><span class="stat-icon green">✓</span><div><small>Resolved incidents</small><strong id="resolvedCount">—</strong><em>Marked as resolved</em></div></article>
+  </section>
+  <section class="main-grid">
+    <article class="panel map-panel">
+      <div class="panel-head"><div><p class="eyebrow">GEOSPATIAL OVERVIEW</p><h2>Incident hotspot map</h2></div><div class="map-legend"><span><i class="dot critical"></i> Critical</span><span><i class="dot high"></i> High</span><span><i class="dot other"></i> Other</span></div></div>
+      <div id="map" aria-label="Map of reported flood incidents"></div>
+      <p class="map-footnote">Demo coordinates only · Map tiles require internet · Pin colour follows priority score</p>
+    </article>
+    <article class="panel report-panel">
+      <div class="panel-head"><div><p class="eyebrow">FIELD INPUT</p><h2>Report an incident</h2></div><span class="panel-icon">＋</span></div>
+      <form id="incidentForm">
+        <label>Incident title<input name="title" required maxlength="100" placeholder="e.g. Waterlogging at junction"></label>
+        <div class="two-col"><label>Category<select name="category"><option>Waterlogging</option><option>Blocked drain</option><option>Road flooding</option><option>Drain overflow</option><option>Other</option></select></label>
+        <label>Severity<select name="severity"><option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option></select></label></div>
+        <div class="two-col"><label>Rainfall (mm)<input name="rainfall_mm" type="number" min="0" max="300" value="45" required></label>
+        <label>Drainage condition<select name="drainage"><option>Clear</option><option>Needs inspection</option><option selected>Partially blocked</option><option>Blocked</option></select></label></div>
+        <div class="two-col"><label>Latitude<input name="lat" type="number" step="any" value="13.3390" required></label><label>Longitude<input name="lng" type="number" step="any" value="78.7540" required></label></div>
+        <label>Reporter type<select name="reporter"><option>Citizen</option><option>Field worker</option></select></label>
+        <label>Description<textarea name="description" rows="2" maxlength="500" placeholder="What did you observe?"></textarea></label>
+        <button class="button primary full" type="submit">Submit incident report <span>→</span></button>
+        <p id="reportMessage" class="form-message" role="status"></p>
+      </form>
+    </article>
+  </section>
+  <section class="lower-grid">
+    <article class="panel">
+      <div class="panel-head"><div><p class="eyebrow">TRIAGE QUEUE</p><h2>Priority-ranked incidents</h2></div><span class="count-pill" id="incidentCount">0</span></div>
+      <div id="incidentList" class="incident-list"></div>
+      <p class="method-note"><strong>Priority logic:</strong> severity (0–50) + rainfall (0–25) + drainage blockage (0–25). This transparent score is a prototype triage aid, not a flood prediction.</p>
+    </article>
+    <article class="panel">
+      <div class="panel-head"><div><p class="eyebrow">MUNICIPAL OPERATIONS</p><h2>Task tracking</h2></div><span class="panel-icon">✓</span></div>
+      <form id="taskForm" class="task-create">
+        <label>Related incident<select name="incident_id" id="taskIncident"></select></label>
+        <label>Action required<input name="title" required placeholder="e.g. Inspect drain and clear debris"></label>
+        <div class="two-col"><label>Assigned team<input name="team" value="Ward Response Team" required></label><label>Due target<input name="due" value="Today 16:00" required></label></div>
+        <button class="button secondary full" type="submit">＋ Create municipal task</button>
+        <p id="taskMessage" class="form-message" role="status"></p>
+      </form>
+      <div class="task-list" id="taskList"></div>
+    </article>
+  </section>
+
+  <section class="panel alerts-panel">
+    <div class="panel-head"><div><p class="eyebrow">PUBLIC SAFETY NOTIFICATIONS</p><h2>SMS alerts & siren integration</h2><p class="panel-description">Configure demo alert preferences. Real SMS and physical sirens need an approved provider and hardware.</p></div><span class="panel-icon">!</span></div>
+    <form id="alertForm" class="alert-grid">
+      <label class="toggle-label"><span><strong>SMS alert mode</strong><small>Prepare alerts for configured phone numbers</small></span><input type="checkbox" id="smsEnabled" name="sms_enabled"></label>
+      <label class="toggle-label"><span><strong>Siren alert mode</strong><small>Simulate a siren command; no hardware is triggered</small></span><input type="checkbox" id="sirenEnabled" name="siren_enabled"></label>
+      <label class="wide-field">Recipient phone numbers (one per line)<textarea id="phoneNumbers" rows="3" placeholder="+91XXXXXXXXXX&#10;+91XXXXXXXXXX"></textarea><small>Only add numbers whose owners have agreed to receive alerts.</small></label>
+      <label class="wide-field">Alert message<textarea id="alertMessage" rows="2" maxlength="320">AQUASHIELD AI AI demo alert: high flood risk reported. Please follow official safety instructions.</textarea></label>
+      <div class="alert-actions wide-field"><button class="button secondary" type="submit">Save alert preferences</button><button class="button primary" type="button" id="testAlert">Test simulated SMS</button><button class="button danger" type="button" id="speakerTest">Play computer alarm</button><button class="button ghost" type="button" id="stopSpeaker">Stop alarm</button></div>
+      <p id="alertMessageStatus" class="form-message wide-field" role="status"></p>
+      <div class="alert-notice wide-field"><strong>Important:</strong> SMS is simulation-only: no messages are sent. “Play computer alarm” plays a local browser tone on this device only; it does not activate a building/street siren. Browser audio must be allowed. Do not use demo tones as public emergency warnings.</div>
+    </form>
+  </section>
+  <section class="panel simulator">
+    <div class="panel-head"><div><p class="eyebrow">WHAT-IF SIMULATION</p><h2>Flood risk scenario lab</h2><p class="panel-description">Adjust conditions to explore how combined pressures change the illustrative risk score.</p></div><span class="sim-icon">⌁</span></div>
+    <div class="sim-layout">
+      <div class="sim-controls">
+        <div class="slider-row"><div><label for="rainSlider">Rainfall intensity</label><span><b id="rainValue">80</b> mm</span></div><input id="rainSlider" type="range" min="0" max="250" value="80"><div class="range-labels"><span>0 mm</span><span>250 mm</span></div></div>
+        <div class="slider-row"><div><label for="blockSlider">Drain blockage</label><span><b id="blockValue">65</b>%</span></div><input id="blockSlider" type="range" min="0" max="100" value="65"><div class="range-labels"><span>Clear</span><span>Fully blocked</span></div></div>
+        <div class="slider-row"><div><label for="riverSlider">River / channel level</label><span><b id="riverValue">40</b>%</span></div><input id="riverSlider" type="range" min="0" max="100" value="40"><div class="range-labels"><span>Normal</span><span>High</span></div></div>
+        <button id="runSimulation" class="button primary">Run scenario <span>→</span></button>
+      </div>
+      <div class="sim-result"><div class="risk-top"><div><small>ILLUSTRATIVE COMBINED RISK</small><h3 id="riskLabel">—</h3></div><div class="risk-score"><strong id="riskScore">—</strong><span>/ 100</span></div></div>
+        <div class="risk-track"><div id="riskBar"></div></div><p id="riskAdvice">Run the scenario to view suggested response actions.</p><div class="model-note">Model note: weighted heuristic for demonstration only; not calibrated, not a forecast, and not for emergency decisions.</div></div>
+    </div>
+  </section>
+  <footer><strong>AQUASHIELD AI AI</strong> · UrbanFlow challenge prototype <span>Built for demo use · Verify all real-world data before action</span></footer>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

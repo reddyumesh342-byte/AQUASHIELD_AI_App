@@ -1,0 +1,34 @@
+[
+  {
+    "id": 501,
+    "incident_id": 1003,
+    "title": "Deploy pump to flooded underpass",
+    "team": "Emergency Response A",
+    "status": "In Progress",
+    "due": "Today 12:00"
+  },
+  {
+    "id": 502,
+    "incident_id": 1002,
+    "title": "Clear silt from Bus Stand Road drain",
+    "team": "Drainage Team 2",
+    "status": "Completed",
+    "due": "Today 14:00"
+  },
+  {
+    "id": 503,
+    "incident_id": 1001,
+    "title": "Inspect market junction and place barricades",
+    "team": "Ward Team 1",
+    "status": "Assigned",
+    "due": "Today 13:00"
+  },
+  {
+    "id": 504,
+    "incident_id": 1003,
+    "title": "inpect of water",
+    "team": "Ward Response Team",
+    "status": "Assigned",
+    "due": "Today 16:00"
+  }
+]

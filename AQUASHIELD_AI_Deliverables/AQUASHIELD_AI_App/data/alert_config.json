@@ -1,0 +1,16 @@
+{
+  "sms_enabled": true,
+  "siren_enabled": true,
+  "phone_numbers": [
+    "7842267278"
+  ],
+  "sms_provider": "console",
+  "siren_mode": "demo",
+  "last_alert": {
+    "created_at": "2026-10-22 11:11:21",
+    "message": "AQUASHIELD AI AI demo alert: high flood risk reported. Please follow official safety instructions.",
+    "sms_recipients": [],
+    "sms_status": "SIMULATED ONLY \u2014 no SMS sent; this demo has no SMS gateway connected",
+    "siren_status": "Disabled"
+  }
+}
